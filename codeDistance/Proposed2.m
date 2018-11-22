@@ -1,8 +1,8 @@
 clear all; clc;
 addpath(genpath('Origin Images')); addpath(genpath('result')); addpath(genpath('tools'));
 
-mask2 = [false, true; true, true];
-mask3 = [false, true, true; true, true, true; true, true, true];
+mask1 = [false, true; true, true];
+mask2 = [false, false, true; true, true, true];
 
 Imgs = {'Lena', 'Baboon', 'Barbara', 'Airplane', 'Lake', 'Peppers', 'Boat', 'Elaine'};
 %%
@@ -17,7 +17,7 @@ for tt = 1:1:8
     a = 2; b = 2;
     R = zeros(2,1000);
     cnt = 0;
-    for Payload = 5000+EdgInfo:1000:100000+EdgInfo
+    for Payload = 35000+EdgInfo:1000:100000+EdgInfo
         %         Payload
         %%
         H1 = cell(1,2048);
@@ -31,26 +31,40 @@ for tt = 1:1:8
         for i = 1:(A)-1
             for j = 1:(B)-1
                 for ii = 1:2
-                    for jj = 1:2
-                        if ii == 1 && jj == 2
+                    for jj = 0:2
+                        if ii == 1 && (jj == 2)
 %                             [1*(i-1)+ii,1*(j-1)+jj, 1*(i-1)+ii+1,1*(j-1)+jj]
                             NL(i,j) = NL(i,j) + abs(I(1*(i-1)+ii,1*(j-1)+jj) - I(1*(i-1)+ii+1,1*(j-1)+jj));
                         end
                     end
                 end
+                flag = 0;
                 for ii = 1:2
-                    for jj = 1:2
-                        if ii == 2 && jj == 1
-%                             [1*(i-1)+ii,1*(j-1)+jj, 1*(i-1)+ii,1*(j-1)+jj+1]
-                            NL(i,j) = NL(i,j) + abs(I(1*(i-1)+ii,1*(j-1)+jj) - I(1*(i-1)+ii,1*(j-1)+jj+1));
+                    for jj = 0:2
+                        if ii == 2 && (jj == 1 || jj == 0)
+                            if 1*(j-1)+jj == 0
+                                flag = 1;
+                            else
+%                                 [1*(i-1)+ii,1*(j-1)+jj, 1*(i-1)+ii,1*(j-1)+jj+1]
+                                NL(i,j) = NL(i,j) + abs(I(1*(i-1)+ii,1*(j-1)+jj) - I(1*(i-1)+ii,1*(j-1)+jj+1));
+                            end
                         end
                     end
+                end
+                if flag == 1
+%                     flag
+                    NL(i,j) = floor(NL(i,j) * 4/3);
                 end
                 T = NL(i,j);
                 
                 % 2x2 block
-                X = I(i:i+1,j:j+1);
-                X = X(mask2);
+                if flag == 1
+                    X = I(i:i+1,j:j+1);
+                    X = X(mask1);
+                else
+                    X = I(i:i+1,j-1:j+1);
+                    X = X(mask2);
+                end
                 [Y, In] = sort(X);
                 if Y(end) ~= Y(1)
                     % dmax

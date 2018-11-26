@@ -18,7 +18,7 @@ for tt = 1:1:8
     a = 4; b = 4;
     R = zeros(2,1000);
     cnt = 0;
-    for Payload =5000+EdgInfo:1000:100000+EdgInfo
+    for Payload =10000+EdgInfo:1000:100000+EdgInfo
         tic
 %         Payload
         %%

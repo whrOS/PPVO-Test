@@ -17,7 +17,7 @@ for tt = 1:1:8
     a = 3; b = 3;
     R = zeros(2,1000);
     cnt = 0;
-    for Payload =5000+EdgInfo:1000:100000+EdgInfo
+    for Payload =10000+EdgInfo:1000:100000+EdgInfo
 %         Payload
         %%
         H1 = cell(1,2048);
